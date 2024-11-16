@@ -1,0 +1,34 @@
+BuildSupplyDepot+	1
+BuildPylon-	2
+BuildGateway-	3
+BuildBarracks+	4
+BuildCyberneticsCore-	5
+BuildNexus-	6
+BuildCommandCenter+	7
+BuildBunker+	8
+BuildFactory+	9
+BuildBarracksReactor+	10
+BuildRoboticsFacility-	11
+BuildStarport+	12
+BuildFactoryTechLab+	13
+BuildForge-	14
+BuildTwilightCouncil-	15
+BuildEngineeringBay+	16
+BuildStarportTechLab+	17
+BuildStarportReactor+	18
+BuildFactoryReactor+	19
+BuildShieldBattery-	20
+BuildStargate-	21
+BuildRoboticsBay-	22
+BuildMissileTurret+	23
+BuildSupplyDepot-	24
+BuildBarracks-	25
+BuildCommandCenter-	26
+BuildFactory-	27
+BuildBarracksReactor-	28
+BuildStarport-	29
+BuildFactoryTechLab-	30
+BuildEngineeringBay-	31
+BuildStarportReactor-	32
+BuildFactoryReactor-	33
+BuildTemplarArchive-	34
