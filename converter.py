@@ -23,7 +23,6 @@ def main():
         matchup = [p.play_race[0:1] for p in players]
         matchup.sort()
         matchup="".join(matchup)
-        replay_info = [matchup, replay.release_string, replay.type, replay.map_name, replay.start_time]
         
         if len(players) != 2: continue
         sec = 0
@@ -47,7 +46,7 @@ def main():
                     nextItemset = True
         if (not nextItemset): 
             print ("-1", end=" ")
-        print("\t".join([str(s) for s in ["-2"]+replay_info]))
+        print("\t".join(["-2"]))
         
     f = open("dictionary.txt", "w")
     for a in dictionary:
