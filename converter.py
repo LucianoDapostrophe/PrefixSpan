@@ -33,9 +33,9 @@ def main():
             if (isinstance(event, TargetPointCommandEvent) and event.has_ability and event.ability_name.startswith("Build")):
                 action = event.ability_name[5:]
                 if event.player.result[:1] == "W": 
-                    action = action + "+"
+                    action = "+" + action
                 else: 
-                    action = action + "-"
+                    action = "-" + action
                 if (action not in dictionary):
                     dictionary[action] = id
                     id += 1
@@ -51,6 +51,6 @@ def main():
         
     f = open("dictionary.txt", "w")
     for a in dictionary:
-        f.write("{1}\t{0}\n".format(dictionary[a], a))
-        
+        f.write("{1}\t\t{0}\n".format(dictionary[a], a))
+     
 main()

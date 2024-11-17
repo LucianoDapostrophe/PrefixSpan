@@ -1,0 +1,20 @@
+SupplyDepot+ : 							1
+Pylon- : 							2
+Gateway- : 							3
+Barracks+ : 							4
+CyberneticsCore- : 							5
+Nexus- : 							6
+CommandCenter+ : 							7
+Bunker+ : 							8
+Factory+ : 							9
+BarracksReactor+ : 							10
+RoboticsFacility- : 							11
+Starport+ : 							12
+FactoryTechLab+ : 							13
+Forge- : 							14
+TwilightCouncil- : 							15
+EngineeringBay+ : 							16
+StarportTechLab+ : 							17
+StarportReactor+ : 							18
+FactoryReactor+ : 							19
+ShieldBattery- : 							20
