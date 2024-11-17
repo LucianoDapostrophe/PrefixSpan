@@ -31,7 +31,7 @@ def main():
         for event in replay.events:
             if (event.second > maxSeconds): break
             if (isinstance(event, TargetPointCommandEvent) and event.has_ability and event.ability_name.startswith("Build")):
-                action=event.ability_name
+                action = event.ability_name[5:]
                 if event.player.result[:1] == "W": 
                     action = action + "+"
                 else: 
