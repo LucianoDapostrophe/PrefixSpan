@@ -5,7 +5,7 @@
 #include <map>
 
 struct seqPattern {
-    std::vector<int> prefix;
+    std::string prefix;
     std::vector<seqPattern>* suffixes;
 };
 
@@ -20,16 +20,23 @@ int main() {
     while (std::getline(std::cin >> std::ws, tmp)) {
         sequences.push_back(tmp);
     }
-    //read dictionary
-    std::map<int, std::string> dictionary;
+    std::vector<std::string> buildActions;
     std::ifstream myFile("dictionary.txt");
     if (myFile.is_open()) {
         while (myFile.good()) {
             std::getline(myFile, tmp);
-            std::cout << tmp << std::endl;
-            //dictionary[tmp[tmp.size() - 1] - '0'] = tmp.substr()
+            std::string num = "";
+            for (char c : tmp) {
+                if (std::isdigit(c)) {
+                    num += c;
+                }
+            }
+            buildActions.push_back(num);
         }
         myFile.close();
+    }
+    for (std::string n : buildActions) {
+        std::cout << n << std::endl;
     }
     //output tree
 

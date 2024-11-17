@@ -51,6 +51,6 @@ def main():
         
     f = open("dictionary.txt", "w")
     for a in dictionary:
-        f.write("{1}\t\t{0}\n".format(dictionary[a], a))
+        f.write("{1}\t{0}\n".format(dictionary[a], a))
      
 main()
