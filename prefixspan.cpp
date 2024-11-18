@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <set>
+#include <limits>
 
 // Helper function to display sequences
 void printSequences(const std::vector<std::vector<int>>& sequences) {
@@ -96,9 +97,19 @@ std::vector<std::vector<int>> convertToInts(const std::vector<std::string>& data
     return dataset;
 }
 
-int main(int argSup) {
+int handleArgs(int argc, char** argv) {
+    //the following if is a debug line and should be removed at the end
+    if (argc > 1) {
+        std::string num = argv[1];
+        return std::stoi(num);
+    }
+    return INT_MAX;
+}
+
+int main(int argc, char** argv) {
+    std::cout << "Have " << argc << " arguments:\n";
+    int minSupport = handleArgs(argc, argv);
     //generate tree
-    unsigned long long minSupport = argSup;
     std::vector<std::string> data;
     std::string tmp = "";
     while (std::getline(std::cin >> std::ws, tmp)) {
@@ -106,6 +117,7 @@ int main(int argSup) {
     }
     for (std::string s : data) std::cout << s << std::endl << std::endl;
     std::vector<std::vector<int>> dataset = convertToInts(data);
+    //debug loop
     for (int i = 0; i < dataset.size(); i++)
     {
         for (int j = 0; j < dataset[i].size(); j++)

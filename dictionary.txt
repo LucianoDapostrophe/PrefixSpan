@@ -18,10 +18,3 @@
 +StarportReactor	18
 +FactoryReactor	19
 -ShieldBattery	20
--Stargate	21
-+BarracksTechLab	22
-+Armory	23
--TemplarArchive	24
--RoboticsBay	25
--DarkShrine	26
-+AutoTurret	27
