@@ -5,13 +5,6 @@
 #include <map>
 #include <set>
 
-struct seqPattern {
-    std::string prefix;
-    std::vector<std::string> suffixes;
-    int count = suffixes.size();
-    std::vector<seqPattern>* successors;
-};
-
 // Helper function to display sequences
 void printSequences(const std::vector<std::vector<int>>& sequences) {
     for (const auto& seq : sequences) {
@@ -25,7 +18,6 @@ void printSequences(const std::vector<std::vector<int>>& sequences) {
 }
 
 // project the dataset based on a prefix
-
 std::vector<std::vector<int>> projectDatabase(const std::vector<std::vector<int>>& dataset, int prefix) {
     std::vector<std::vector<int>> projectedDatabase;
     for (std::vector<int> sequence : dataset) {
@@ -38,6 +30,7 @@ std::vector<std::vector<int>> projectDatabase(const std::vector<std::vector<int>
     return projectedDatabase;
 }
 
+// find patterns occuring >= the support
 std::map<int, int> findFrequent(std::vector<std::vector<int>>& dataset, int minSupport) {
     std::map<int, int> frequency;
     for (const std::vector<int>& sequence : dataset) {
@@ -74,24 +67,6 @@ void prefixSpan(std::vector<std::vector<int>>& dataset, const std::vector<int>& 
         if (!projectedDatabase.empty()) {
             prefixSpan(projectedDatabase, newPrefix, minSup);
         }
-    }
-}
-
-void getActionsFromDict(std::vector<std::string>& buildActions) {
-    std::ifstream myFile("dictionary.txt");
-    std::string tmp;
-    if (myFile.is_open()) {
-        while (myFile.good()) {
-            std::getline(myFile, tmp);
-            std::string num = "";
-            for (char c : tmp) {
-                if (std::isdigit(c)) {
-                    num += c;
-                }
-            }
-            buildActions.push_back(num);
-        }
-        myFile.close();
     }
 }
 
