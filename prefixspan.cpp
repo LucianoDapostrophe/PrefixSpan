@@ -21,7 +21,7 @@ void printSequences(const std::vector<std::vector<int>>& sequences) {
 // project the dataset based on a prefix
 std::vector<std::vector<int>> projectDatabase(const std::vector<std::vector<int>>& dataset, int prefix) {
     std::vector<std::vector<int>> projectedDatabase;
-    for (std::vector<int> sequence : dataset) {
+    for (const std::vector<int>& sequence : dataset) {
         auto it = find(sequence.begin(), sequence.end(), prefix);
         if (it != sequence.end() && ++it != sequence.end()) {
             std::vector<int> projectedSequence(it, sequence.end());
@@ -32,7 +32,7 @@ std::vector<std::vector<int>> projectDatabase(const std::vector<std::vector<int>
 }
 
 // find patterns occuring >= the support
-std::map<int, int> findFrequent(std::vector<std::vector<int>>& dataset, int minSupport) {
+std::map<int, int> findFrequent(const std::vector<std::vector<int>>& dataset, int minSupport) {
     std::map<int, int> frequency;
     for (const std::vector<int>& sequence : dataset) {
         std::set<int> uniqueItems(sequence.begin(), sequence.end());
@@ -49,7 +49,7 @@ std::map<int, int> findFrequent(std::vector<std::vector<int>>& dataset, int minS
     return frequentItems;
 }
 
-void prefixSpan(std::vector<std::vector<int>>& dataset, const std::vector<int>& prefix, unsigned long long minSup) {
+void prefixSpan(const std::vector<std::vector<int>>& dataset, const std::vector<int>& prefix, int minSup) {
     //find frequent items in dataset
     std::map<int, int> frequentItems = findFrequent(dataset, minSup);
     //iterate over each frequent item
@@ -98,7 +98,7 @@ std::vector<std::vector<int>> convertToInts(const std::vector<std::string>& data
 }
 
 int handleArgs(int argc, char** argv) {
-    //the following if is a debug line and should be removed at the end
+    //the following 'if' is a debug line and should be removed at the end
     if (argc > 1) {
         std::string num = argv[1];
         return std::stoi(num);
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
     }
     for (std::string s : data) std::cout << s << std::endl << std::endl;
     std::vector<std::vector<int>> dataset = convertToInts(data);
-    //debug loop
+    //debug
     for (int i = 0; i < dataset.size(); i++)
     {
         for (int j = 0; j < dataset[i].size(); j++)
