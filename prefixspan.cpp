@@ -62,13 +62,15 @@ std::map<std::vector<int>, int> findFrequent(const Dataset& dataset, int minSupp
     return frequentItems;
 }
 
-void prefixSpan(const Dataset& dataset, const Sequence& prefix, int minSup) {
+int prefixSpan(const Dataset& dataset, const Sequence& prefix, int minSup) {
     //find frequent items in dataset
     std::map<std::vector<int>, int> frequentItems = findFrequent(dataset, minSup);
+    unsigned long long count = 0;
     //iterate over each frequent item
     for (const auto& item : frequentItems) {
         Sequence newPrefix = prefix;
         newPrefix.push_back(item.first);
+        ++count;
 
         //output for debugging
         std::cout << "Frequent Pattern: ";
@@ -79,9 +81,10 @@ void prefixSpan(const Dataset& dataset, const Sequence& prefix, int minSup) {
 
         //recursive call
         if (!projectedDatabase.empty()) {
-            prefixSpan(projectedDatabase, newPrefix, minSup);
+            count += prefixSpan(projectedDatabase, newPrefix, minSup);
         }
     }
+    return count;
 }
 
 int handleArgs(int argc, char** argv) {
@@ -123,10 +126,9 @@ int main(int argc, char** argv) {
     int minSupport = handleArgs(argc, argv);
     //generate tree
     Dataset dataset = processInput();
-    printSequences(dataset);
-    //debug
     Sequence prefix;
     std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
     //output tree
-    prefixSpan(dataset, prefix, minSupport);
+    unsigned long long count = prefixSpan(dataset, prefix, minSupport);
+    std::cout << count << " patterns found." << std::endl;
 }
