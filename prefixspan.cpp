@@ -18,7 +18,7 @@ void printSequences(const Dataset& sequences) {
             for (int j = 0; j < seq[i].size(); j++)
             {
                 std::cout << seq[i][j];
-                if (i < seq[i].size() - 1) std::cout << ", ";
+                if (j < seq[i].size() - 1) std::cout << ", ";
             }
             std::cout << "}";
             if (i < seq.size() - 1) std::cout << ", ";
@@ -93,10 +93,7 @@ int handleArgs(int argc, char** argv) {
     return INT_MAX;
 }
 
-int main(int argc, char** argv) {
-    std::cout << "Have " << argc << " arguments:\n";
-    int minSupport = handleArgs(argc, argv);
-    //generate tree
+Dataset processInput() {
     Dataset dataset;
     dataset.push_back(Sequence());
     dataset[0].push_back(std::vector<int>());
@@ -106,23 +103,27 @@ int main(int argc, char** argv) {
         if (num == -2) {
             dataset.push_back(Sequence());
             dataset[i].pop_back();
-            std::cout << "new sequence" << std::endl;
             i++;
             j = 0;
             dataset[i].push_back(std::vector<int>());
         }
         else if (num == -1) {
             dataset[i].push_back(std::vector<int>());
-            std::cout << "new itemset" << std::endl;
             j++;
         }
         else {
             dataset[i][j].push_back(num);
-            std::cout << "number entered" << std::endl;
         }
-        printSequences(dataset);
     }
     dataset.pop_back();
+    return dataset;
+}
+
+int main(int argc, char** argv) {
+    int minSupport = handleArgs(argc, argv);
+    //generate tree
+    Dataset dataset = processInput();
+    printSequences(dataset);
     //debug
     Sequence prefix;
     std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
