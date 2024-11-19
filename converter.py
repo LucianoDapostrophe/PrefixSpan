@@ -17,7 +17,10 @@ def main():
     windowSeconds = args.Window
     
     for filename in sc2reader.utils.get_files(args.DirectoryName):
-        replay = sc2reader.load_replay(filename, load_level=4, debug=True)
+        try:
+            replay = sc2reader.load_replay(filename, load_level=4, debug=True)
+        except:
+            continue
         players = [t.players for t in replay.teams]
         players = [y for x in players for y in x]
         matchup = [p.play_race[0:1] for p in players]
@@ -31,7 +34,7 @@ def main():
             if (event.second > maxSeconds): break
             if (isinstance(event, TargetPointCommandEvent) and event.has_ability and event.ability_name.startswith("Build")):
                 action = event.ability_name[5:]
-                if event.player.result[:1] == "W": 
+                if event.player.result and event.player.result[:1] == "W": 
                     action = "+" + action
                 else: 
                     action = "-" + action

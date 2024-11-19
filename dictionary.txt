@@ -18,6 +18,36 @@
 +StarportReactor	18
 +FactoryReactor	19
 -ShieldBattery	20
--Stargate	21
++MissileTurret	21
 +BarracksTechLab	22
--RoboticsBay	23
++Pylon	23
+-SupplyDepot	24
++Gateway	25
+-Barracks	26
++CyberneticsCore	27
++Nexus	28
+-CommandCenter	29
+-Factory	30
+-BarracksReactor	31
+-Starport	32
++TwilightCouncil	33
+-FactoryTechLab	34
++ShieldBattery	35
+-Bunker	36
++RoboticsFacility	37
+-EngineeringBay	38
++RoboticsBay	39
++Forge	40
+-AutoTurret	41
+-StarportReactor	42
+-MissileTurret	43
+-Stargate	44
+-BarracksTechLab	45
+-StarportTechLab	46
+-RoboticsBay	47
+-TemplarArchive	48
++Armory	49
++AutoTurret	50
+-FactoryReactor	51
++GhostAcademy	52
++FusionCore	53
