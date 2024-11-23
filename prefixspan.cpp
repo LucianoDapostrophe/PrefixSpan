@@ -1,13 +1,17 @@
-#include <fstream>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <map>
 #include <set>
-#include <limits>
 
 using Sequence = std::vector<std::vector<int>>;
 using Dataset = std::vector<Sequence>;
+
+struct Node {
+    std::vector<int> prefix;
+    Sequence* successors;
+};
 
 // Helper function to display sequences
 void printSequences(const Dataset& sequences) {
@@ -122,10 +126,29 @@ Dataset processInput() {
     return dataset;
 }
 
+void readDictionary(std::map<std::string, int>& w, std::map<std::string, int>& l) {
+    std::string tmp = "";
+    std::ifstream openFile("dictionary.txt");
+    while (std::getline(openFile, tmp)) {
+        size_t it = tmp.find(":");
+        std::string first = tmp.substr(0, it);
+        int second = std::stoi(tmp.substr(it + 1));
+        if (first[0] == '+') {
+            w[first] = second;
+        } else {
+            l[first] = second;
+        }
+    }
+    openFile.close();
+}
+
 int main(int argc, char** argv) {
     int minSupport = handleArgs(argc, argv);
     //generate tree
     Dataset dataset = processInput();
+    std::map<std::string, int> wActions;
+    std::map<std::string, int> lActions;
+    readDictionary(wActions, lActions);
     Sequence prefix;
     std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
     //output tree

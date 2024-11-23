@@ -33,7 +33,7 @@ def main():
         for event in replay.events:
             if (event.second > maxSeconds): break
             if (isinstance(event, TargetPointCommandEvent) and event.has_ability and event.ability_name.startswith("Build")):
-                action = event.ability_name[5:]
+                action = event.ability_name[5:].strip()
                 if event.player.result and event.player.result[:1] == "W": 
                     action = "+" + action
                 else: 
@@ -53,6 +53,6 @@ def main():
         
     f = open("dictionary.txt", "w")
     for a in dictionary:
-        f.write("{1}\t{0}\n".format(dictionary[a], a))
+        f.write("{1}:{0}\n".format(dictionary[a], a))
      
 main()

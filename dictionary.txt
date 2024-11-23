@@ -1,53 +1,53 @@
-+SupplyDepot	1
--Pylon	2
--Gateway	3
-+Barracks	4
--CyberneticsCore	5
--Nexus	6
-+CommandCenter	7
-+Bunker	8
-+Factory	9
-+BarracksReactor	10
--RoboticsFacility	11
-+Starport	12
-+FactoryTechLab	13
--Forge	14
--TwilightCouncil	15
-+EngineeringBay	16
-+StarportTechLab	17
-+StarportReactor	18
-+FactoryReactor	19
--ShieldBattery	20
-+MissileTurret	21
-+BarracksTechLab	22
-+Pylon	23
--SupplyDepot	24
-+Gateway	25
--Barracks	26
-+CyberneticsCore	27
-+Nexus	28
--CommandCenter	29
--Factory	30
--BarracksReactor	31
--Starport	32
-+TwilightCouncil	33
--FactoryTechLab	34
-+ShieldBattery	35
--Bunker	36
-+RoboticsFacility	37
--EngineeringBay	38
-+RoboticsBay	39
-+Forge	40
--AutoTurret	41
--StarportReactor	42
--MissileTurret	43
--Stargate	44
--BarracksTechLab	45
--StarportTechLab	46
--RoboticsBay	47
--TemplarArchive	48
-+Armory	49
-+AutoTurret	50
--FactoryReactor	51
-+GhostAcademy	52
-+FusionCore	53
++SupplyDepot:1
+-Pylon:2
+-Gateway:3
++Barracks:4
+-CyberneticsCore:5
+-Nexus:6
++CommandCenter:7
++Bunker:8
++Factory:9
++BarracksReactor:10
+-RoboticsFacility:11
++Starport:12
++FactoryTechLab:13
+-Forge:14
+-TwilightCouncil:15
++EngineeringBay:16
++StarportTechLab:17
++StarportReactor:18
++FactoryReactor:19
+-ShieldBattery:20
++MissileTurret:21
++BarracksTechLab:22
++Pylon:23
+-SupplyDepot:24
++Gateway:25
+-Barracks:26
++CyberneticsCore:27
++Nexus:28
+-CommandCenter:29
+-Factory:30
+-BarracksReactor:31
+-Starport:32
++TwilightCouncil:33
+-FactoryTechLab:34
++ShieldBattery:35
+-Bunker:36
++RoboticsFacility:37
+-EngineeringBay:38
++RoboticsBay:39
++Forge:40
+-AutoTurret:41
+-StarportReactor:42
+-MissileTurret:43
+-Stargate:44
+-BarracksTechLab:45
+-StarportTechLab:46
+-RoboticsBay:47
+-TemplarArchive:48
++Armory:49
++AutoTurret:50
+-FactoryReactor:51
++GhostAcademy:52
++FusionCore:53
