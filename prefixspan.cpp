@@ -14,7 +14,7 @@ struct Node {
 };
 
 // Helper function to display sequences
-void printSequences(const Dataset& sequences) {
+void printSequencesToConsole(const Dataset& sequences) {
     for (const auto& seq : sequences) {
         std::cout << "[";
         for (int i = 0; i < seq.size(); i++) {
@@ -29,6 +29,24 @@ void printSequences(const Dataset& sequences) {
         }
         std::cout << "]" << std::endl;
     }
+}
+
+//store data for processing
+void printSequencesToCsv(const Dataset& sequences) {
+    std::ofstream file("patterns.txt", std::ios::app);
+    for (const auto& seq : sequences) {
+        for (int i = 0; i < seq.size(); i++) {
+            file << "{";
+            for (int j = 0; j < seq[i].size(); j++) {
+                file << seq[i][j];
+                if (j < seq[i].size() - 1) file << ", ";
+            }
+            file << "}";
+            if (i < seq.size() - 1) file << ", ";
+        }
+        file << "\n";
+    }
+    file.close();
 }
 
 // project the dataset based on a prefix
@@ -78,7 +96,9 @@ int prefixSpan(const Dataset& dataset, const Sequence& prefix, int minSup) {
 
         //output for debugging
         std::cout << "Frequent Pattern: ";
-        printSequences({newPrefix});
+        printSequencesToConsole({newPrefix});
+        printSequencesToCsv({newPrefix});
+
 
         //project database from the current prefix
         Dataset projectedDatabase = projectDatabase(dataset, item.first);
