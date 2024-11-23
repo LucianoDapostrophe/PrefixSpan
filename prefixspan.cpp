@@ -11,6 +11,7 @@ using Dataset = std::vector<Sequence>;
 struct Node {
     std::vector<int> prefix;
     Sequence* successors;
+    std::vector<int>* extensions;
 };
 
 // Helper function to display sequences
@@ -149,7 +150,18 @@ int main(int argc, char** argv) {
     std::map<std::string, int> wActions;
     std::map<std::string, int> lActions;
     readDictionary(wActions, lActions);
-    Sequence prefix;
+    Sequence prefix(1);
+    for (auto& action : wActions) {
+        prefix[0].push_back(action.second);
+    }
+    for (auto& action : lActions) {
+        prefix[0].push_back(action.second);
+    }
+    for (int i = 0; i < prefix[0].size(); i++)
+    {
+        std::cout << prefix[0][i] << " ";
+    }
+    std::cout << std::endl;
     std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
     //output tree
     unsigned long long count = prefixSpan(dataset, prefix, minSupport);
