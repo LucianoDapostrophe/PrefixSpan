@@ -35,6 +35,7 @@ void printSequencesToConsole(const Dataset& sequences) {
 void printSequencesToCsv(const Dataset& sequences) {
     std::ofstream file("patterns.txt", std::ios::app);
     for (const auto& seq : sequences) {
+        file << "[";
         for (int i = 0; i < seq.size(); i++) {
             file << "{";
             for (int j = 0; j < seq[i].size(); j++) {
@@ -44,7 +45,7 @@ void printSequencesToCsv(const Dataset& sequences) {
             file << "}";
             if (i < seq.size() - 1) file << ", ";
         }
-        file << "\n";
+        file << "]\n";
     }
     file.close();
 }
@@ -146,14 +147,17 @@ Dataset processInput() {
     return dataset;
 }
 
-void readDictionary(std::map<std::string, int>& w, std::map<std::string, int>& l) {
+void readDictionary(std::map<int, std::string>& w, std::map<int, std::string>& l) {
     std::string tmp = "";
     std::ifstream openFile("dictionary.txt");
+        if (!openFile.is_open()) {
+        std::cerr << "file dictionary failed to open" << std::endl;
+    }
     while (std::getline(openFile, tmp)) {
         size_t it = tmp.find(":");
-        std::string first = tmp.substr(0, it);
-        int second = std::stoi(tmp.substr(it + 1));
-        if (first[0] == '+') {
+        std::string second = tmp.substr(0, it);
+        int first = std::stoi(tmp.substr(it + 1));
+        if (second[0] == '+') {
             w[first] = second;
         } else {
             l[first] = second;
@@ -162,16 +166,59 @@ void readDictionary(std::map<std::string, int>& w, std::map<std::string, int>& l
     openFile.close();
 }
 
+Dataset processCSV() {
+    Dataset dataset;
+    std::string strSequence;
+    std::cout << "process CSV function entered" << std::endl;
+    std::ifstream openFile("patterns.txt");
+    if (!openFile.is_open()) {
+        std::cerr << "file failed to open" << std::endl;
+    }
+    while (std::getline(openFile, strSequence)) {
+        //debug
+        int i = -1;
+        std::string tmp = "";
+        Sequence s;
+        for (char c : strSequence) {
+            if (std::isdigit(c)) {
+                tmp += c;
+            }
+            else if (c == '{') {
+                s.push_back(std::vector<int>());
+                i++;
+            }
+            else if (tmp != "") {
+                s[i].push_back(std::stoi(tmp));
+                tmp = "";
+            }
+        }
+        dataset.push_back(s);
+    }
+    openFile.close();
+    dataset.pop_back();
+    return dataset;
+}
+
+int prefixSpanNaive(const Dataset& dataset, const std::map<int, std::string>& wActions, const std::map<int, std::string>& lActions) {
+    return 0;
+}
+
 int main(int argc, char** argv) {
     int minSupport = handleArgs(argc, argv);
     //generate tree
     Dataset dataset = processInput();
-    std::map<std::string, int> wActions;
-    std::map<std::string, int> lActions;
+    std::map<int, std::string> wActions;
+    std::map<int, std::string> lActions;
     readDictionary(wActions, lActions);
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     Sequence prefix;
     std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
     //output tree
     unsigned long long count = prefixSpan(dataset, prefix, minSupport);
     std::cout << count << " patterns found." << std::endl;
+    //compute frequent balanced patterns
+    std::cout << "computing prefixspannaive to find balanced patterns." << std::endl;
+    dataset = processCSV();
+    count = prefixSpanNaive(dataset, wActions, lActions);
 }
