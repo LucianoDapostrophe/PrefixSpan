@@ -14,7 +14,7 @@ struct Node {
 };
 
 // Helper function to display sequences
-void printSequencesToConsole(const Dataset& sequences) {
+void printSequencesToConsole(const Dataset& sequences, int count) {
     for (const auto& seq : sequences) {
         std::cout << "[";
         for (int i = 0; i < seq.size(); i++) {
@@ -27,12 +27,12 @@ void printSequencesToConsole(const Dataset& sequences) {
             std::cout << "}";
             if (i < seq.size() - 1) std::cout << ", ";
         }
-        std::cout << "]" << std::endl;
+        std::cout << "]" << " Count is " << count << std::endl;
     }
 }
 
 //store data for processing
-void printSequencesToCsv(const Dataset& sequences) {
+void printSequencesToCsv(const Dataset& sequences, int count) {
     std::ofstream file("patterns.txt", std::ios::app);
     for (const auto& seq : sequences) {
         file << "[";
@@ -45,7 +45,7 @@ void printSequencesToCsv(const Dataset& sequences) {
             file << "}";
             if (i < seq.size() - 1) file << ", ";
         }
-        file << "]\n";
+        file << "]" << count << "\n";
     }
     file.close();
 }
@@ -95,10 +95,10 @@ int prefixSpan(const Dataset& dataset, const Sequence& prefix, int minSup) {
         newPrefix.push_back(item.first);
         ++count;
 
-        //output for debugging
+        //output
         std::cout << "Frequent Pattern: ";
-        printSequencesToConsole({newPrefix});
-        printSequencesToCsv({newPrefix});
+        printSequencesToConsole({newPrefix}, item.second);
+        printSequencesToCsv({newPrefix}, item.second);
 
 
         //project database from the current prefix
@@ -169,13 +169,11 @@ void readDictionary(std::map<int, std::string>& w, std::map<int, std::string>& l
 Dataset processCSV() {
     Dataset dataset;
     std::string strSequence;
-    std::cout << "process CSV function entered" << std::endl;
     std::ifstream openFile("patterns.txt");
     if (!openFile.is_open()) {
         std::cerr << "file failed to open" << std::endl;
     }
     while (std::getline(openFile, strSequence)) {
-        //debug
         int i = -1;
         std::string tmp = "";
         Sequence s;
@@ -199,26 +197,46 @@ Dataset processCSV() {
     return dataset;
 }
 
-int prefixSpanNaive(const Dataset& dataset, const std::map<int, std::string>& wActions, const std::map<int, std::string>& lActions) {
-    return 0;
+void prefixSpanNaive(const Dataset& dataset, const std::map<int, std::string>& wActions, const std::map<int, std::string>& lActions) {
+    std::set<std::vector<std::vector<int>>> patterns(dataset.begin(), dataset.end());
+    for (const auto& sequence : dataset) {
+        Sequence dualSequence;
+        for (int i = 0; i < sequence.size(); i++) {
+            dualSequence.push_back(std::vector<int>());
+            for (int j = 0; j < sequence[i].size(); j++) {
+                auto it = wActions.find(sequence[i][j]);
+                if (it != wActions.end()) {
+                    std::string action = it->second;
+                    action[0] = '-';
+                    bool match = false;
+                    for (auto& value : lActions) {
+                        if (value.second == action) {
+                            dualSequence[i].push_back(value.first);
+                            match = true;
+                            break;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
 }
 
 int main(int argc, char** argv) {
     int minSupport = handleArgs(argc, argv);
     //generate tree
     Dataset dataset = processInput();
-    std::map<int, std::string> wActions;
-    std::map<int, std::string> lActions;
-    readDictionary(wActions, lActions);
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     Sequence prefix;
     std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
     //output tree
     unsigned long long count = prefixSpan(dataset, prefix, minSupport);
     std::cout << count << " patterns found." << std::endl;
     //compute frequent balanced patterns
+    std::map<int, std::string> wActions;
+    std::map<int, std::string> lActions;
+    readDictionary(wActions, lActions);
     std::cout << "computing prefixspannaive to find balanced patterns." << std::endl;
     dataset = processCSV();
-    count = prefixSpanNaive(dataset, wActions, lActions);
+    //count = prefixSpanNaive(dataset, wActions, lActions);
 }
