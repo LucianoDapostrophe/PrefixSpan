@@ -8,11 +8,6 @@
 using Sequence = std::vector<std::vector<int>>;
 using Dataset = std::vector<Sequence>;
 
-struct Node {
-    std::vector<int> prefix;
-    Sequence* successors;
-};
-
 // Helper function to display sequences
 void printSequencesToConsole(const Dataset& sequences, int count) {
     for (const auto& seq : sequences) {
@@ -147,7 +142,7 @@ Dataset processInput() {
     return dataset;
 }
 
-void readDictionary(std::map<int, std::string>& w, std::map<int, std::string>& l) {
+void readDictionary(std::map<int, std::string>& w, std::map<std::string, int>& l) {
     std::string tmp = "";
     std::ifstream openFile("dictionary.txt");
         if (!openFile.is_open()) {
@@ -160,14 +155,14 @@ void readDictionary(std::map<int, std::string>& w, std::map<int, std::string>& l
         if (second[0] == '+') {
             w[first] = second;
         } else {
-            l[first] = second;
+            l[second] = first;
         }
     }
     openFile.close();
 }
 
-Dataset processCSV() {
-    Dataset dataset;
+std::map<Sequence, int> processCSV() {
+    std::map<Sequence, int> dataset;
     std::string strSequence;
     std::ifstream openFile("patterns.txt");
     if (!openFile.is_open()) {
@@ -190,53 +185,64 @@ Dataset processCSV() {
                 tmp = "";
             }
         }
-        dataset.push_back(s);
+        auto it  = strSequence.find("]");
+        dataset[s] = std::stoi(strSequence.substr(it + 1));
     }
     openFile.close();
-    dataset.pop_back();
     return dataset;
 }
 
-void prefixSpanNaive(const Dataset& dataset, const std::map<int, std::string>& wActions, const std::map<int, std::string>& lActions) {
-    std::set<std::vector<std::vector<int>>> patterns(dataset.begin(), dataset.end());
-    for (const auto& sequence : dataset) {
-        Sequence dualSequence;
-        for (int i = 0; i < sequence.size(); i++) {
-            dualSequence.push_back(std::vector<int>());
-            for (int j = 0; j < sequence[i].size(); j++) {
-                auto it = wActions.find(sequence[i][j]);
-                if (it != wActions.end()) {
-                    std::string action = it->second;
-                    action[0] = '-';
-                    bool match = false;
-                    for (auto& value : lActions) {
-                        if (value.second == action) {
-                            dualSequence[i].push_back(value.first);
-                            match = true;
-                            break;
-                        }
-                    }
-
+bool findDual(const Sequence& sequence, Sequence& dualSequence, const std::map<int, std::string>& wActions, const std::map<std::string, int>& lActions) {
+    for (int i = 0; i < sequence.size(); i++) {
+        dualSequence.push_back(std::vector<int>());
+        for (int j = 0; j < sequence[i].size(); j++) {
+            auto itW = wActions.find(sequence[i][j]);
+            if (itW != wActions.end()) {
+                std::string action = itW->second;
+                action[0] = '-';
+                auto itL = lActions.find(action);
+                if (itL != lActions.end()) {
+                    dualSequence[i].push_back(itL->second);
+                }
+                else {
+                    return false;
                 }
             }
+        }
+    }
+    return true;
+}
+
+void computeBalance() {
+    //compute frequent balanced patterns
+    //std::vector<int> frequencies = getFrequencies();
+}
+
+void prefixSpanNaive(const std::map<Sequence, int>& dataset) {
+    std::map<int, std::string> wActions;
+    std::map<std::string, int> lActions;
+    readDictionary(wActions, lActions);
+    std::set<Sequence> patterns(dataset.begin(), dataset.end());
+    for (const auto& sequence : dataset) {
+        Sequence dualSequence;
+        if (findDual(sequence.first, dualSequence, wActions, lActions) && patterns.find(dualSequence) != patterns.end()) {
+            computeBalance();
         }
     }
 }
 
 int main(int argc, char** argv) {
-    int minSupport = handleArgs(argc, argv);
+    // debug int minSupport = handleArgs(argc, argv);
     //generate tree
-    Dataset dataset = processInput();
-    Sequence prefix;
-    std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
+    // debug Dataset dataset = processInput();
+    // debug Sequence prefix;
+    // debug std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
     //output tree
-    unsigned long long count = prefixSpan(dataset, prefix, minSupport);
-    std::cout << count << " patterns found." << std::endl;
-    //compute frequent balanced patterns
-    std::map<int, std::string> wActions;
-    std::map<int, std::string> lActions;
-    readDictionary(wActions, lActions);
-    std::cout << "computing prefixspannaive to find balanced patterns." << std::endl;
-    dataset = processCSV();
-    //count = prefixSpanNaive(dataset, wActions, lActions);
+    // debug unsigned long long count = prefixSpan(dataset, prefix, minSupport);
+    // debug std::cout << count << " patterns found." << std::endl;
+    // debug std::cout << "computing prefixspannaive to find balanced patterns." << std::endl;
+    std::map<std::vector<std::vector<int>>, int> patternDataset;
+    patternDataset = processCSV();
+    //dataset = processCSV();
+    prefixSpanNaive(patternDataset);
 }
