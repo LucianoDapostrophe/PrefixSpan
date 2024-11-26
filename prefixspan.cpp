@@ -9,7 +9,7 @@ using Sequence = std::vector<std::vector<int>>;
 using Dataset = std::vector<Sequence>;
 
 // Helper function to display sequences
-void printSequencesToConsole(const Dataset& sequences, int count) {
+void printSequencesToConsole(const Dataset& sequences) {
     for (const auto& seq : sequences) {
         std::cout << "[";
         for (int i = 0; i < seq.size(); i++) {
@@ -22,7 +22,7 @@ void printSequencesToConsole(const Dataset& sequences, int count) {
             std::cout << "}";
             if (i < seq.size() - 1) std::cout << ", ";
         }
-        std::cout << "]" << " Count is " << count << std::endl;
+        std::cout << "]" << std::endl;
     }
 }
 
@@ -92,7 +92,7 @@ int prefixSpan(const Dataset& dataset, const Sequence& prefix, int minSup) {
 
         //output
         std::cout << "Frequent Pattern: ";
-        printSequencesToConsole({newPrefix}, item.second);
+        printSequencesToConsole({newPrefix});
         printSequencesToCsv({newPrefix}, item.second);
 
 
@@ -142,21 +142,18 @@ Dataset processInput() {
     return dataset;
 }
 
-void readDictionary(std::map<int, std::string>& w, std::map<std::string, int>& l) {
+void readDictionary(std::map<int, std::string>& actionsByID, std::map<std::string, int>& actionsBySequence) {
     std::string tmp = "";
     std::ifstream openFile("dictionary.txt");
         if (!openFile.is_open()) {
         std::cerr << "file dictionary failed to open" << std::endl;
     }
     while (std::getline(openFile, tmp)) {
-        size_t it = tmp.find(":");
-        std::string second = tmp.substr(0, it);
-        int first = std::stoi(tmp.substr(it + 1));
-        if (second[0] == '+') {
-            w[first] = second;
-        } else {
-            l[second] = first;
-        }
+        auto it = tmp.find(":");
+        std::string actionSequence = tmp.substr(0, it);
+        int actionID = std::stoi(tmp.substr(it + 1));
+        actionsByID[actionID] = actionSequence;
+        actionsBySequence[actionSequence] = actionID;
     }
     openFile.close();
 }
@@ -192,41 +189,51 @@ std::map<Sequence, int> processCSV() {
     return dataset;
 }
 
-bool findDual(const Sequence& sequence, Sequence& dualSequence, const std::map<int, std::string>& wActions, const std::map<std::string, int>& lActions) {
+bool findDual(const Sequence& sequence, Sequence& dualSequence, const std::map<int, std::string>& actionsByID, const std::map<std::string, int>& actionsBySequence) {
     for (int i = 0; i < sequence.size(); i++) {
         dualSequence.push_back(std::vector<int>());
         for (int j = 0; j < sequence[i].size(); j++) {
-            auto itW = wActions.find(sequence[i][j]);
-            if (itW != wActions.end()) {
-                std::string action = itW->second;
+            auto itI = actionsByID.find(sequence[i][j]);
+            std::string action = itI->second;
+            if (action[0] == '+') {
                 action[0] = '-';
-                auto itL = lActions.find(action);
-                if (itL != lActions.end()) {
-                    dualSequence[i].push_back(itL->second);
-                }
-                else {
-                    return false;
-                }
+            }
+            else {
+                action[0] = '+';
+            }
+            auto itS = actionsBySequence.find(action);
+            if (itS != actionsBySequence.end()) {
+                dualSequence[i].push_back(itS->second);
+            }
+            else {
+                return false;
             }
         }
     }
     return true;
 }
 
-void computeBalance() {
+void computeBalance(const Sequence& sequence, const Sequence& dual, int seqSupport, int dualSupport, int totalSupport) {
     //compute frequent balanced patterns
-    //std::vector<int> frequencies = getFrequencies();
+    std::cout << "Balanced Patterns: " << std::endl;
+    printSequencesToConsole({sequence});
+    std::cout << "Balance is " << seqSupport << "/" << totalSupport << std::endl;
+    printSequencesToConsole({dual});
+    std::cout << "Balance is " << dualSupport << "/" << totalSupport << std::endl;
+
 }
 
 void prefixSpanNaive(const std::map<Sequence, int>& dataset) {
-    std::map<int, std::string> wActions;
-    std::map<std::string, int> lActions;
-    readDictionary(wActions, lActions);
-    std::set<Sequence> patterns(dataset.begin(), dataset.end());
+    std::map<int, std::string> actionsByID;
+    std::map<std::string, int> actionsBySequence;
+    readDictionary(actionsByID, actionsBySequence);
     for (const auto& sequence : dataset) {
         Sequence dualSequence;
-        if (findDual(sequence.first, dualSequence, wActions, lActions) && patterns.find(dualSequence) != patterns.end()) {
-            computeBalance();
+        if (findDual(sequence.first, dualSequence, actionsByID, actionsBySequence) && dataset.find(dualSequence) != dataset.end()) {
+            auto it = dataset.find(dualSequence);
+            if (it != dataset.end()) {
+                computeBalance(sequence.first, dualSequence, sequence.second, it->second, sequence.second + it->second);
+            }
         }
     }
 }
@@ -241,8 +248,7 @@ int main(int argc, char** argv) {
     // debug unsigned long long count = prefixSpan(dataset, prefix, minSupport);
     // debug std::cout << count << " patterns found." << std::endl;
     // debug std::cout << "computing prefixspannaive to find balanced patterns." << std::endl;
-    std::map<std::vector<std::vector<int>>, int> patternDataset;
+    std::map<Sequence, int> patternDataset;
     patternDataset = processCSV();
-    //dataset = processCSV();
     prefixSpanNaive(patternDataset);
 }
