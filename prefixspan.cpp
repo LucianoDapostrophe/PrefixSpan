@@ -113,9 +113,10 @@ int handleArgs(int argc, char** argv) {
         std::string num = argv[1];
         return std::stoi(num);
     }
-    return INT_MAX;
+    return 2;
 }
 
+//read the time-series dataset from python
 Dataset processInput() {
     Dataset dataset;
     dataset.push_back(Sequence());
@@ -142,6 +143,7 @@ Dataset processInput() {
     return dataset;
 }
 
+//read the item dictionary
 void readDictionary(std::map<int, std::string>& actionsByID, std::map<std::string, int>& actionsBySequence) {
     std::string tmp = "";
     std::ifstream openFile("dictionary.txt");
@@ -158,6 +160,7 @@ void readDictionary(std::map<int, std::string>& actionsByID, std::map<std::strin
     openFile.close();
 }
 
+//read the saved frequent patterns in
 std::map<Sequence, int> processCSV() {
     std::map<Sequence, int> dataset;
     std::string strSequence;
@@ -189,6 +192,7 @@ std::map<Sequence, int> processCSV() {
     return dataset;
 }
 
+//find the dual of the current sequence if it is also frequent
 bool findDual(const Sequence& sequence, Sequence& dualSequence, const std::map<int, std::string>& actionsByID, const std::map<std::string, int>& actionsBySequence) {
     for (int i = 0; i < sequence.size(); i++) {
         dualSequence.push_back(std::vector<int>());
@@ -229,6 +233,7 @@ void prefixSpanNaive(const std::map<Sequence, int>& dataset) {
     readDictionary(actionsByID, actionsBySequence);
     for (const auto& sequence : dataset) {
         Sequence dualSequence;
+        //if the dual of the current sequence is also frequent, find it and print balance.
         if (findDual(sequence.first, dualSequence, actionsByID, actionsBySequence) && dataset.find(dualSequence) != dataset.end()) {
             auto it = dataset.find(dualSequence);
             if (it != dataset.end() && std::distance(dataset.begin(), it) > std::distance(dataset.begin(), dataset.find(sequence.first))) {
@@ -239,15 +244,15 @@ void prefixSpanNaive(const std::map<Sequence, int>& dataset) {
 }
 
 int main(int argc, char** argv) {
-    // debug int minSupport = handleArgs(argc, argv);
+    int minSupport = handleArgs(argc, argv);
     //generate tree
-    // debug Dataset dataset = processInput();
-    // debug Sequence prefix;
-    // debug std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
+    Dataset dataset = processInput();
+    Sequence prefix;
+    std::cout << "running prefixspan with minsupport = " << minSupport << std::endl;
     //output tree
-    // debug unsigned long long count = prefixSpan(dataset, prefix, minSupport);
-    // debug std::cout << count << " patterns found." << std::endl;
-    // debug std::cout << "computing prefixspannaive to find balanced patterns." << std::endl;
+    unsigned long long count = prefixSpan(dataset, prefix, minSupport);
+    std::cout << count << " patterns found." << std::endl;
+    std::cout << "computing prefixspannaive to find balanced patterns." << std::endl;
     std::map<Sequence, int> patternDataset;
     patternDataset = processCSV();
     prefixSpanNaive(patternDataset);
