@@ -215,7 +215,7 @@ bool findDual(const Sequence& sequence, Sequence& dualSequence, const std::map<i
 
 void computeBalance(const Sequence& sequence, const Sequence& dual, int seqSupport, int dualSupport, int totalSupport) {
     //compute frequent balanced patterns
-    std::cout << "Balanced Patterns: " << std::endl;
+    std::cout << "\nBalanced Patterns: " << std::endl;
     printSequencesToConsole({sequence});
     std::cout << "Balance is " << seqSupport << "/" << totalSupport << std::endl;
     printSequencesToConsole({dual});
@@ -231,7 +231,7 @@ void prefixSpanNaive(const std::map<Sequence, int>& dataset) {
         Sequence dualSequence;
         if (findDual(sequence.first, dualSequence, actionsByID, actionsBySequence) && dataset.find(dualSequence) != dataset.end()) {
             auto it = dataset.find(dualSequence);
-            if (it != dataset.end()) {
+            if (it != dataset.end() && std::distance(dataset.begin(), it) > std::distance(dataset.begin(), dataset.find(sequence.first))) {
                 computeBalance(sequence.first, dualSequence, sequence.second, it->second, sequence.second + it->second);
             }
         }
